@@ -8,27 +8,33 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Brand</a>
+            <a class="navbar-brand" href="{{route('product.index')}}">Home</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
                 <li>
-                    <a class="nav-link" href="/shopping-cart">
+                    <a class="nav-link" href="{{route('product.shoppingCart')}}">
                         <i class="fas fa-shopping-cart"></i>
                         Shopping Cart
+                        <span class="badge">{{Session::has('cart') ? Session::get('cart')->totalQty : ''}}</span>
                     </a>
                 </li>
                 <li class="dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-user"></i>
-                        User Account
+                        User Management
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="#">User Account</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#">Logout</a></li>
+                        @if(Auth::check())
+                            <li><a href="{{route('user.profile')}}">Profile</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="{{route('user.logout')}}">Logout</a></li>
+                        @else
+                            <li><a href="{{route('user.signup')}}">Sign Up</a></li>
+                            <li><a href="{{route('user.signin')}}">Sign In</a></li>
+                        @endif
                     </ul>
                 </li>
             </ul>

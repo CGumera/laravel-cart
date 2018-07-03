@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -13,8 +14,8 @@ class UserController extends Controller
 
     public function postSignup(Request $request){
         $this->validate($request, [
-            'name' => 'name',
-            'email' => 'email|required|unique:users',
+            'name' => 'required',
+            'email' => 'required|email|unique:users',
             'password' => 'required|min:4'
         ]);
 
@@ -25,6 +26,32 @@ class UserController extends Controller
         ]);
         $user->save();
 
-        return redirect()->route-('product.index');
+        return redirect()->route('user.profile');
+    }
+
+    public function getSignin() {
+        return view('user.signin');
+    }
+
+    public function postSignin(Request $request){
+        $this->validate($request, [
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+
+        if (Auth::attempt(['email' => $request->input('email'),
+            'password' => $request->input('password')])) {
+            return redirect()->route('user.profile');
+        }
+        return redirect()->back();
+    }
+
+    public function getProfile() {
+        return view('user.profile');
+    }
+
+    public function logout() {
+        Auth::logout();
+        return redirect()->back();
     }
 }
