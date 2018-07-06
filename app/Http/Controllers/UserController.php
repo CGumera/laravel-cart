@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class UserController extends Controller
 {
@@ -41,17 +42,27 @@ class UserController extends Controller
 
         if (Auth::attempt(['email' => $request->input('email'),
             'password' => $request->input('password')])) {
+            if (Session::has('oldUrl')) {
+                $oldUrl = Session::get('oldUrl');
+                Session::forget('oldUrl');
+                return redirect()->to($oldUrl);
+            }
             return redirect()->route('user.profile');
         }
         return redirect()->back();
     }
 
     public function getProfile() {
-        return view('user.profile');
+        $orders = Auth::user()->orders;
+        $orders->transform(function ($order, $key) {
+            $order->cart = unserialize($order->cart);
+            return $order;
+        });
+        return view('user.profile', ['orders' => $orders]);
     }
 
     public function logout() {
         Auth::logout();
-        return redirect()->back();
+        return redirect()->route('user.signin');
     }
 }
