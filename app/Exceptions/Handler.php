@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\Session;
 
 class Handler extends ExceptionHandler
 {
@@ -47,6 +48,7 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         //return parent::render($request, $exception);
-        return redirect()->route('product.index');
+        Session::put('oldUrl', $request->url());
+        return redirect()->route('user.signin');
     }
 }
